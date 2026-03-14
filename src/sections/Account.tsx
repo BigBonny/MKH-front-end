@@ -55,7 +55,7 @@ const Account = () => {
           .from('users')
           .select('*')
           .eq('clerk_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (fetchError && fetchError.code !== 'PGRST116') {
           console.error('Error fetching user:', fetchError);
