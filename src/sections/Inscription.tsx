@@ -1,19 +1,33 @@
 import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { TrendingUp, Package, Handshake, Check, ChevronRight, Users, BookOpen, Gift } from 'lucide-react';
+import { TrendingUp, Package, Handshake, Check, ChevronRight, BookOpen, Users, Eye } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
+import { useClerk } from '@clerk/clerk-react';
+import { loadStripe } from '@stripe/stripe-js';
+import { supabase } from '../lib/supabase';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Inscription = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { isSignedIn, user } = useClerk();
+
   const [activeTab, setActiveTab] = useState<'actionnariat' | 'abonnement' | 'partenariat'>('actionnariat');
   const [showForm, setShowForm] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+  const [showActionnariatTable, setShowActionnariatTable] = useState(false);
+  const [actionnariatRequests, setActionnariatRequests] = useState<Array<{
+    id?: number; 
+    name: string; 
+    email: string; 
+    phone: string; 
+    status: string; 
+    created_at: string
+  }>>([]);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
   const { t } = useLanguage();
 
@@ -35,46 +49,39 @@ const Inscription = () => {
     },
   ];
 
-  const actionnariatBenefits = [
-    { icon: TrendingUp, text: t('inscription.actionnariat.benefit1') },
-    { icon: Users, text: t('inscription.actionnariat.benefit2') },
-    { icon: Gift, text: t('inscription.actionnariat.benefit3') },
-    { icon: Check, text: t('inscription.actionnariat.benefit4') },
-  ];
-
   const abonnementPlans = [
     {
-      name: t('inscription.abonnement.basic.name'),
-      price: '49€',
+      name: 'Essentiel',
+      price: '29€',
       period: t('inscription.abonnement.month'),
       features: [
-        t('inscription.abonnement.basic.feature1'),
-        t('inscription.abonnement.basic.feature2'),
-        t('inscription.abonnement.basic.feature3'),
+        'Access to basic content',
+        'Email support',
+        'Monthly updates',
       ],
     },
     {
-      name: t('inscription.abonnement.premium.name'),
-      price: '99€',
+      name: 'Premium',
+      price: '59€',
       period: t('inscription.abonnement.month'),
       features: [
-        t('inscription.abonnement.premium.feature1'),
-        t('inscription.abonnement.premium.feature2'),
-        t('inscription.abonnement.premium.feature3'),
-        t('inscription.abonnement.premium.feature4'),
+        'All Essential features',
+        'Priority support',
+        'Exclusive content',
+        'Advanced analytics',
       ],
       popular: true,
     },
     {
-      name: t('inscription.abonnement.vip.name'),
-      price: '199€',
+      name: 'VIP',
+      price: '99€',
       period: t('inscription.abonnement.month'),
       features: [
-        t('inscription.abonnement.vip.feature1'),
-        t('inscription.abonnement.vip.feature2'),
-        t('inscription.abonnement.vip.feature3'),
-        t('inscription.abonnement.vip.feature4'),
-        t('inscription.abonnement.vip.feature5'),
+        'All Premium features',
+        'Personal mentorship',
+        'VIP events access',
+        'Custom solutions',
+        'Direct CEO contact',
       ],
     },
   ];
@@ -119,11 +126,148 @@ const Inscription = () => {
     return () => ctx.revert();
   }, [activeTab]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Load actionnariat requests from Supabase
+  useEffect(() => {
+    const loadActionnariatRequests = async () => {
+      const { data, error } = await supabase
+        .from('actionnariat_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading requests:', error);
+        return;
+      }
+
+      setActionnariatRequests(data || []);
+    };
+
+    loadActionnariatRequests();
+  }, [activeTab]);
+
+  const handleSubscription = async (plan: { 
+    name: string; 
+    price: string; 
+    period: string; 
+    features: string[]; 
+    popular?: boolean 
+  }) => {
+    try {
+      console.log('Starting subscription for plan:', plan.name);
+      
+      // Check if user is authenticated
+      if (!isSignedIn) {
+        console.log('User not authenticated, showing sign up');
+        setShowSignUp(true);
+        return;
+      }
+      
+      // Show loading state
+      console.log(`Preparing payment for ${plan.name}...`);
+      
+      // Create checkout session via API
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          plan: plan.name,
+          price: parseInt(plan.price.replace('€', '')) * 100,
+          currency: 'eur',
+          userId: user?.id, // Include Clerk user ID
+          userEmail: user?.primaryEmailAddress?.emailAddress, // Include user email
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const session = await response.json();
+      
+      if (session.error) {
+        throw new Error(session.error);
+      }
+
+      // Redirect to Stripe Checkout
+      if (session.url) {
+        window.location.href = session.url;
+      } else {
+        // Fallback: Use Stripe redirect
+        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+        if (stripe) {
+          const { error } = await (stripe as any).redirectToCheckout({ 
+            sessionId: session.id 
+          });
+          
+          if (error) {
+            throw new Error(error.message);
+          }
+        }
+      }
+      
+    } catch (error) {
+      console.error('Subscription error:', error);
+    }
+  };
+
+  const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success(t('inscription.form.success'));
-    setShowForm(false);
-    setFormData({ name: '', email: '', phone: '' });
+    // Redirect to Clerk sign-up page for proper account creation
+    window.location.href = '/sign-up';
+  };
+
+  const handleActionnariatSubmit = async () => {
+    if (!formData.name || !formData.email) {
+      console.log('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      // Save to Supabase
+      const { error } = await supabase
+        .from('actionnariat_requests')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          status: 'pending',
+          created_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        console.error('Error submitting request. Please try again.');
+        return;
+      }
+
+      console.log('Your actionnariat request has been submitted successfully!');
+      setShowForm(false);
+      setFormData({ name: '', email: '', phone: '' });
+    } catch {
+      console.error('Error submitting request. Please try again.');
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (activeTab === 'abonnement') {
+      await handleSubscription(abonnementPlans[0]);
+    } else if (activeTab === 'actionnariat') {
+      await handleActionnariatSubmit();
+    } else {
+      // Show sign-up dialog for partenariat
+      setShowSignUp(true);
+    }
+  };
+
+  const openActionnariatForm = () => {
+    if (!formData.name || !formData.email) {
+      console.log('Please fill in name and email first');
+      return;
+    }
+    setShowForm(true);
   };
 
   return (
@@ -171,60 +315,98 @@ const Inscription = () => {
         <div className="tab-content max-w-6xl mx-auto">
           {/* Actionnariat */}
           {activeTab === 'actionnariat' && (
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8">
+            <div className="space-y-8">
+              <div className="flex justify-between items-center">
                 <h3
                   className="text-3xl md:text-4xl text-[#1A1A1A] font-semibold"
                   style={{ fontFamily: 'Playfair Display, serif' }}
                 >
                   {t('inscription.actionnariat.heading')}
                 </h3>
-                <p className="body-lg text-[#1A1A1A]/70">
-                  {t('inscription.actionnariat.desc')}
-                </p>
-
-                <div className="grid sm:grid-cols-2 gap-6">
-                  {actionnariatBenefits.map((benefit, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm"
-                    >
-                      <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                        <benefit.icon className="w-5 h-5 text-[#D4AF37]" />
-                      </div>
-                      <span className="text-[#1A1A1A]/80">{benefit.text}</span>
-                    </div>
-                  ))}
-                </div>
-
                 <button
-                  onClick={() => setShowForm(true)}
-                  className="btn-primary flex items-center gap-3"
+                  onClick={() => setShowActionnariatTable(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-[#D4AF37] text-white rounded-lg hover:bg-[#B8941F] transition-colors"
                 >
-                  <span>{t('inscription.actionnariat.cta')}</span>
-                  <ChevronRight className="w-5 h-5" />
+                  <Eye className="w-4 h-4" />
+                  <span>View Requests</span>
                 </button>
               </div>
 
-              <div className="relative">
-                <div className="bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-2xl p-8 text-white">
-                  <TrendingUp className="w-16 h-16 mb-6" />
-                  <h4
-                    className="text-2xl font-semibold mb-4"
-                    style={{ fontFamily: 'Playfair Display, serif' }}
-                  >
-                    {t('inscription.actionnariat.card.title')}
-                  </h4>
-                  <p className="text-white/80 mb-8">
-                    {t('inscription.actionnariat.card.desc')}
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold">2.5%</span>
-                    <span className="text-white/70">{t('inscription.actionnariat.card.return')}</span>
+              {isSignedIn ? (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center">
+                  <Users className="w-12 h-12 mx-auto mb-4 text-green-600" />
+                  <p className="text-green-800 font-semibold">You are already signed in</p>
+                  <p className="text-green-600">Actionnariat requests are managed through your dashboard</p>
+                </div>
+              ) : (
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                  <div className="space-y-8">
+                    <p className="body-lg text-[#1A1A1A]/70">
+                      {t('inscription.actionnariat.desc')}
+                    </p>
+                    
+                    <div className="grid sm:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <Label htmlFor="action-name">{t('inscription.form.name')}</Label>
+                        <Input
+                          id="action-name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          placeholder={t('inscription.form.namePlaceholder')}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <Label htmlFor="action-email">{t('inscription.form.email')}</Label>
+                        <Input
+                          id="action-email"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder={t('inscription.form.emailPlaceholder')}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <Label htmlFor="action-phone">{t('inscription.form.phone')}</Label>
+                      <Input
+                        id="action-phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder={t('inscription.form.phonePlaceholder')}
+                      />
+                    </div>
+                    <button
+                      onClick={openActionnariatForm}
+                      className="btn-primary flex items-center gap-3"
+                    >
+                      <span>{t('inscription.actionnariat.cta')}</span>
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-2xl p-8 text-white">
+                      <TrendingUp className="w-16 h-16 mb-6" />
+                      <h4
+                        className="text-2xl font-semibold mb-4"
+                        style={{ fontFamily: 'Playfair Display, serif' }}
+                      >
+                        {t('inscription.actionnariat.card.title')}
+                      </h4>
+                      <p className="text-white/80 mb-8">
+                        {t('inscription.actionnariat.card.desc')}
+                      </p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-5xl font-bold">2.5%</span>
+                        <span className="text-white/70">{t('inscription.actionnariat.card.return')}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 border-2 border-[#D4AF37] rounded-2xl -z-10" />
-              </div>
+              )}
             </div>
           )}
 
@@ -253,7 +435,7 @@ const Inscription = () => {
                   >
                     {plan.popular && (
                       <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#D4AF37] text-white text-sm font-semibold rounded-full">
-                        {t('inscription.abonnement.popular')}
+                        POPULAR
                       </span>
                     )}
 
@@ -279,7 +461,7 @@ const Inscription = () => {
                     </ul>
 
                     <button
-                      onClick={() => setShowForm(true)}
+                      onClick={() => handleSubscription(plan)}
                       className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
                         plan.popular
                           ? 'bg-[#D4AF37] text-white hover:bg-[#B8941F]'
@@ -326,7 +508,7 @@ const Inscription = () => {
                     </h4>
                     <p className="text-[#1A1A1A]/60 mb-6">{type.description}</p>
                     <button
-                      onClick={() => setShowForm(true)}
+                      onClick={() => setShowSignUp(true)}
                       className="text-[#D4AF37] font-semibold flex items-center gap-2 mx-auto group"
                     >
                       <span>{t('inscription.partenariat.learnMore')}</span>
@@ -353,40 +535,174 @@ const Inscription = () => {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-6 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="name">{t('inscription.form.name')}</Label>
+              <Label htmlFor="dialog-name">{t('inscription.form.name')}</Label>
               <Input
-                id="name"
+                id="dialog-name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder={t('inscription.form.namePlaceholder')}
                 required
+                readOnly
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">{t('inscription.form.email')}</Label>
+              <Label htmlFor="dialog-email">{t('inscription.form.email')}</Label>
               <Input
-                id="email"
+                id="dialog-email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder={t('inscription.form.emailPlaceholder')}
                 required
+                readOnly
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">{t('inscription.form.phone')}</Label>
+              <Label htmlFor="dialog-phone">{t('inscription.form.phone')}</Label>
               <Input
-                id="phone"
+                id="dialog-phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder={t('inscription.form.phonePlaceholder')}
+                readOnly
               />
             </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="text-sm text-gray-600">
+                Please confirm your information above before submitting your actionnariat request.
+              </p>
+            </div>
             <button type="submit" className="btn-primary w-full">
-              {t('inscription.form.submit')}
+              Confirm & Submit Request
             </button>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Sign Up Dialog */}
+      <Dialog open={showSignUp} onOpenChange={setShowSignUp}>
+        <DialogContent className="max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle
+              className="text-2xl text-[#1A1A1A]"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
+              Create Account for Partnership
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 mt-4">
+            <p className="text-gray-600">
+              To proceed with partnership opportunities, you need to create an account. This will allow us to review your application and contact you.
+            </p>
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="signup-name">{t('inscription.form.name')}</Label>
+                <Input
+                  id="signup-name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder={t('inscription.form.namePlaceholder')}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signup-email">{t('inscription.form.email')}</Label>
+                <Input
+                  id="signup-email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder={t('inscription.form.emailPlaceholder')}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signup-phone">{t('inscription.form.phone')}</Label>
+                <Input
+                  id="signup-phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder={t('inscription.form.phonePlaceholder')}
+                />
+              </div>
+              <button type="submit" className="btn-primary w-full">
+                Create Account
+              </button>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Actionnariat Management Table */}
+      <Dialog open={showActionnariatTable} onOpenChange={setShowActionnariatTable}>
+        <DialogContent className="max-w-4xl bg-white max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle
+              className="text-2xl text-[#1A1A1A]"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
+              Actionnariat Requests Management
+            </DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Phone
+                    </th>
+                    <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {actionnariatRequests.map((request, index) => (
+                    <tr key={request.id || index} className="hover:bg-gray-50">
+                      <td className="border border-gray-200 px-4 py-3 text-sm text-gray-900">
+                        {request.name}
+                      </td>
+                      <td className="border border-gray-200 px-4 py-3 text-sm text-gray-900">
+                        {request.email}
+                      </td>
+                      <td className="border border-gray-200 px-4 py-3 text-sm text-gray-900">
+                        {request.phone || '-'}
+                      </td>
+                      <td className="border border-gray-200 px-4 py-3 text-sm">
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {request.status}
+                        </span>
+                      </td>
+                      <td className="border border-gray-200 px-4 py-3 text-sm text-gray-900">
+                        {new Date(request.created_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {actionnariatRequests.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                No actionnariat requests yet
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </section>

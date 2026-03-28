@@ -84,9 +84,10 @@ const Hero = () => {
         style={{ willChange: 'transform' }}
       >
         <img
-          src="/hero-portrait.jpg"
+          src="/mk2.jpeg"
           alt="Mbouma Kohomm"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center-top"
+          style={{ objectPosition: 'center 0%' }}
         />
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#1A1A1A]/80 via-[#1A1A1A]/50 to-transparent" />
@@ -99,7 +100,7 @@ const Hero = () => {
           {/* Title with letter animation */}
           <h1
             ref={titleRef}
-            className="heading-xl text-white mb-6 overflow-hidden"
+            className="heading-lg text-white mb-6 overflow-hidden"
             style={{ fontFamily: 'Playfair Display, serif' }}
           >
             {titleText.split('').map((letter, index) => (

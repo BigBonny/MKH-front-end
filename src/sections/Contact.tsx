@@ -43,10 +43,28 @@ const Contact = () => {
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success(t('contact.form.success'));
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      toast.success(t('contact.form.success'));
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error('Contact form error:', error);
+      toast.error(t('contact.form.error') || 'Failed to send message. Please try again.');
+    }
   };
 
   const contactInfo = [

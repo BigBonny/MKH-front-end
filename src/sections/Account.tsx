@@ -7,19 +7,22 @@ import { toast } from 'sonner';
 
 type UserType = 'client' | 'partenaire' | 'actionnaire';
 
-interface Order {
-  id: string;
-  status: string;
-  total_amount: number;
-  created_at: string;
-  items: {
-    product: {
-      name: string;
-      image: string;
-    };
+interface PurchasedItem {
+  id: number;
+  user_id: string;
+  stripe_payment_id: string;
+  items: Array<{
+    id: string;
+    name: string;
+    price: number;
     quantity: number;
-    unit_price: number;
-  }[];
+    image: string;
+  }>;
+  total_amount: number;
+  currency: string;
+  status: string;
+  customer_email: string;
+  created_at: string;
 }
 
 interface UserData {
@@ -33,7 +36,7 @@ const Account = () => {
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<UserType>('client');
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<PurchasedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const tabs = [
@@ -85,30 +88,23 @@ const Account = () => {
           setActiveTab(existingUser.user_type);
         }
 
-        // Charger les commandes
-        const { data: userRecord } = await supabase
-          .from('users')
-          .select('id')
-          .eq('clerk_id', user.id)
-          .single();
+        // Charger les commandes depuis purchased_items table
+        console.log('🔍 Loading orders for user:', user.id);
+        const { data: ordersData, error: ordersError } = await supabase
+          .from('purchased_items')
+          .select('*')
+          .eq('user_id', user.id) // Use Clerk user ID directly
+          .order('created_at', { ascending: false });
 
-        if (userRecord) {
-          const { data: ordersData } = await supabase
-            .from('orders')
-            .select(`
-              *,
-              items:order_items(
-                quantity,
-                unit_price,
-                product:products(name, image)
-              )
-            `)
-            .eq('user_id', userRecord.id)
-            .order('created_at', { ascending: false });
+        console.log('📊 Orders query result:', { ordersData, ordersError });
 
-          if (ordersData) {
-            setOrders(ordersData as Order[]);
-          }
+        if (ordersError) {
+          console.error('❌ Orders query error:', ordersError);
+        } else if (ordersData) {
+          console.log('✅ Orders loaded:', ordersData.length, 'orders');
+          setOrders(ordersData as PurchasedItem[]);
+        } else {
+          console.log('ℹ️ No orders found for user');
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -315,6 +311,9 @@ const Account = () => {
               {/* Orders */}
               <div className="bg-white/5 rounded-xl p-8">
                 <h4 className="text-white font-semibold mb-6 text-xl">{t.recentOrders}</h4>
+                <div className="text-white/60 text-sm mb-4">
+                  Debug: {orders.length} orders loaded
+                </div>
                 {orders.length === 0 ? (
                   <p className="text-white/60 text-center py-8">{t.noOrders}</p>
                 ) : (
@@ -323,7 +322,7 @@ const Account = () => {
                       <div key={order.id} className="bg-white/5 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-white font-medium">
-                            {t.orderNumber} #{order.id.slice(0, 8).toUpperCase()}
+                            {t.orderNumber} #{String(order.id).slice(0, 8).toUpperCase()}
                           </span>
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -338,14 +337,22 @@ const Account = () => {
                             {new Date(order.created_at).toLocaleDateString()}
                           </span>
                           <span className="text-[#D4AF37] font-semibold">
-                            {(order.total_amount / 100).toFixed(2)} €
+                            {order.total_amount.toFixed(2)} €
                           </span>
                         </div>
                         {order.items && order.items.length > 0 && (
                           <div className="mt-3 pt-3 border-t border-white/10">
-                            <p className="text-white/60 text-sm">
+                            <p className="text-white/60 text-sm mb-2">
                               {order.items.length} article{order.items.length > 1 ? 's' : ''}
                             </p>
+                            <div className="space-y-1">
+                              {order.items.map((item, index) => (
+                                <div key={index} className="text-white/80 text-xs flex justify-between">
+                                  <span>{item.quantity}x {item.name}</span>
+                                  <span>{(item.price * item.quantity).toFixed(2)} €</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>

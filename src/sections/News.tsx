@@ -46,7 +46,7 @@ const News = () => {
       date: '15 Juin 2025',
       location: 'Paris, France',
       description: t('news.events.event2.desc'),
-      image: '/mission-image.jpg',
+      image: '/impact-3.jpg',
     },
   ];
 

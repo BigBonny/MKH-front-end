@@ -1,0 +1,17 @@
+{
+  "name": "mkh-stripe-server",
+  "version": "1.0.0",
+  "description": "Production Stripe server for MKH",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "stripe": "^16.12.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "@supabase/supabase-js": "^2.39.0"
+  }
+}

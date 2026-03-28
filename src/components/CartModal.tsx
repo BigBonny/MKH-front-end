@@ -3,7 +3,6 @@ import { X, Plus, Minus, ShoppingBag, Trash2, CreditCard, Loader2 } from 'lucide
 import { useUser } from '@clerk/clerk-react';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
-import { toast } from 'sonner';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -18,12 +17,10 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
 
   const handleCheckout = async () => {
     if (items.length === 0) {
-      toast.error(language === 'fr' ? 'Votre panier est vide' : 'Your cart is empty');
       return;
     }
 
     if (!isSignedIn) {
-      toast.info(language === 'fr' ? 'Veuillez vous connecter pour continuer' : 'Please sign in to continue');
       window.location.href = '/sign-in';
       return;
     }
@@ -31,30 +28,28 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
     setIsLoading(true);
 
     try {
-      // Préparer les données pour Stripe Checkout
-      const checkoutData = {
-        items: items.map((item) => ({
-          name: item.name,
-          description: `${item.name} - MKH Store`,
-          unit_amount: item.price * 100, // Convertir en centimes
-          quantity: item.quantity,
-          images: [item.image],
-          currency: 'eur',
-        })),
-        customer_email: user?.primaryEmailAddress?.emailAddress,
-        metadata: {
-          userId: user?.id || '',
-          cartItems: JSON.stringify(items.map((i) => ({ id: i.id, qty: i.quantity }))),
-        },
-      };
-
-      // Appeler la fonction Netlify pour créer la session
-      const response = await fetch('/.netlify/functions/create-checkout-session', {
+      const cartItemsForServer = items.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image
+      }));
+      
+      // Call local API to create checkout session
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(checkoutData),
+        body: JSON.stringify({
+          plan: 'Store Purchase',
+          price: totalPrice * 100,
+          currency: 'eur',
+          userId: user?.id,
+          userEmail: user?.primaryEmailAddress?.emailAddress,
+          cartItems: JSON.stringify(cartItemsForServer)
+        }),
       });
 
       if (!response.ok) {
@@ -64,19 +59,10 @@ const CartModal = ({ isOpen, onClose }: CartModalProps) => {
 
       const { url } = await response.json();
 
-      // Rediriger vers Stripe Checkout
-      if (url) {
-        window.location.href = url;
-      } else {
-        throw new Error('No checkout URL received');
-      }
+      // Redirect to Stripe Checkout
+      window.location.href = url;
     } catch (error) {
       console.error('Checkout error:', error);
-      toast.error(
-        language === 'fr'
-          ? 'Erreur lors du paiement. Veuillez réessayer.'
-          : 'Payment error. Please try again.'
-      );
     } finally {
       setIsLoading(false);
     }

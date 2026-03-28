@@ -1,0 +1,355 @@
+import { useState, useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { TrendingUp, Package, Handshake, Check, ChevronRight, Users, BookOpen, Gift } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { useUser, useClerk, SignInButton, SignUpButton } from '@clerk/clerk-react';
+import { loadStripe } from '@stripe/stripe-js';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const Inscription = () => {
+  const { isSignedIn, isLoaded } = useClerk();
+  const { user } = useUser();
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+  const [activeTab, setActiveTab] = useState<'actionnariat' | 'abonnement' | 'partenariat'>('actionnariat');
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
+  const { t } = useLanguage();
+
+  const tabs = [
+    {
+      id: 'actionnariat' as const,
+      label: t('inscription.actionnariat.title'),
+      icon: TrendingUp,
+    },
+    {
+      id: 'abonnement' as const,
+      label: t('inscription.abonnement.title'),
+      icon: Package,
+    },
+    {
+      id: 'partenariat' as const,
+      label: t('inscription.partenariat.title'),
+      icon: Handshake,
+    },
+  ];
+
+  const actionnariatBenefits = [
+    { icon: TrendingUp, text: t('inscription.actionnariat.benefit1') },
+    { icon: Users, text: t('inscription.actionnariat.benefit2') },
+    { icon: Gift, text: t('inscription.actionnariat.benefit3') },
+    { icon: Check, text: t('inscription.actionnariat.benefit4') },
+  ];
+
+  const abonnementPlans = [
+    {
+      name: t('inscription.abonnement.basic.name'),
+      price: '49€',
+      period: t('inscription.abonnement.month'),
+      features: [
+        t('inscription.abonnement.basic.feature1'),
+        t('inscription.abonnement.basic.feature2'),
+        t('inscription.abonnement.basic.feature3'),
+      ],
+    },
+    {
+      name: t('inscription.abonnement.premium.name'),
+      price: '99€',
+      period: t('inscription.abonnement.month'),
+      features: [
+        t('inscription.abonnement.premium.feature1'),
+        t('inscription.abonnement.premium.feature2'),
+        t('inscription.abonnement.premium.feature3'),
+        t('inscription.abonnement.premium.feature4'),
+      ],
+      popular: true,
+    },
+    {
+      name: t('inscription.abonnement.vip.name'),
+      price: '199€',
+      period: t('inscription.abonnement.month'),
+      features: [
+        t('inscription.abonnement.vip.feature1'),
+        t('inscription.abonnement.vip.feature2'),
+        t('inscription.abonnement.vip.feature3'),
+        t('inscription.abonnement.vip.feature4'),
+        t('inscription.abonnement.vip.feature5'),
+      ],
+    },
+  ];
+
+  const partenariatTypes = [
+    {
+      icon: BookOpen,
+      title: t('inscription.partenariat.type1.title'),
+      description: t('inscription.partenariat.type1.desc'),
+    },
+    {
+      icon: Package,
+      title: t('inscription.partenariat.type2.title'),
+      description: t('inscription.partenariat.type2.desc'),
+    },
+    {
+      icon: Handshake,
+      title: t('inscription.partenariat.type3.title'),
+      description: t('inscription.partenariat.type3.desc'),
+    },
+  ];
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.tab-content',
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 70%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [activeTab]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (isSignedIn) {
+      toast.success(t('inscription.form.success'));
+      setShowForm(false);
+      setFormData({ name: '', email: '', phone: '' });
+      return;
+    }
+    
+    // Handle form submission based on active tab
+    if (activeTab === 'abonnement') {
+      // Handle subscription logic with Stripe
+      try {
+        const stripe = await stripePromise;
+        if (!stripe) {
+          toast.error(t('inscription.form.error'));
+          return;
+        }
+        
+        // Create Stripe checkout session
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            planId: 'basic', // You can make this dynamic based on selected plan
+            customerEmail: formData.email,
+          }),
+        });
+        
+        const { sessionId } = await response.json();
+        
+        // Redirect to Stripe Checkout
+        const { error } = await stripe.redirectToCheckout({ sessionId });
+        
+        if (error) {
+          toast.error(t('inscription.form.error'));
+        } else {
+          toast.success(t('inscription.form.success'));
+          setShowForm(false);
+        }
+      } catch (error) {
+        toast.error(t('inscription.form.error'));
+      }
+    } else {
+      // Handle regular registration with Clerk
+      try {
+        await fetch('/api/register-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+          }),
+        });
+        
+        toast.success(t('inscription.form.success'));
+        setShowForm(false);
+        setFormData({ name: '', email: '', phone: '' });
+      } catch (error) {
+        toast.error(t('inscription.form.error'));
+      }
+    }
+  };
+
+  return (
+    <section
+      id="inscription"
+      ref={sectionRef}
+      className="py-24 md:py-32 bg-[#F5F0E6]"
+    >
+      <div className="section-padding">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <span className="text-[#D4AF37] text-sm font-semibold tracking-[0.3em] uppercase mb-4 block">
+            INSCRIPTION
+          </span>
+          <h2
+            className="heading-lg text-[#1A1A1A] mb-6"
+            style={{ fontFamily: 'Playfair Display, serif' }}
+          >
+            {t('inscription.title')}
+          </h2>
+          <p className="text-[#1A1A1A]/60 max-w-2xl mx-auto body-lg">
+            {t('inscription.subtitle')}
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex flex-wrap justify-center gap-4 mb-16">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-3 px-6 py-4 rounded-full font-semibold transition-all duration-300 ${
+                activeTab === tab.id
+                  ? 'bg-[#D4AF37] text-white shadow-lg shadow-[#D4AF37]/30'
+                  : 'bg-white text-[#1A1A1A] hover:bg-[#D4AF37]/10'
+              }`}
+            >
+              <tab.icon className="w-5 h-5" />
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="tab-content max-w-6xl mx-auto">
+          {/* Actionnariat */}
+          {activeTab === 'actionnariat' && (
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-8">
+                <h3
+                  className="text-3xl md:text-4xl text-[#1A1A1A] font-semibold"
+                  style={{ fontFamily: 'Playfair Display, serif' }}
+                >
+
+// Redirect to Stripe Checkout
+const { error } = await stripe.redirectToCheckout({ sessionId });
+
+if (error) {
+toast.error(t('inscription.form.error'));
+} else {
+toast.success(t('inscription.form.success'));
+setShowForm(false);
+}
+} catch (error) {
+toast.error(t('inscription.form.error'));
+}
+} else {
+// Handle regular registration with Clerk
+try {
+await fetch('/api/register-user', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+name: formData.name,
+email: formData.email,
+phone: formData.phone,
+}),
+});
+
+toast.success(t('inscription.form.success'));
+setShowForm(false);
+setFormData({ name: '', email: '', phone: '' });
+} catch (error) {
+toast.error(t('inscription.form.error'));
+}
+}
+                    <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <type.icon className="w-8 h-8 text-[#D4AF37]" />
+                    </div>
+                    <h4
+                      className="text-xl text-[#1A1A1A] font-semibold mb-4"
+                      style={{ fontFamily: 'Playfair Display, serif' }}
+                    >
+                      {type.title}
+                    </h4>
+                    <p className="text-[#1A1A1A]/60 mb-6">{type.description}</p>
+                    <button
+                      onClick={() => setShowForm(true)}
+                      className="text-[#D4AF37] font-semibold flex items-center gap-2 mx-auto group"
+                    >
+                      <span>{t('inscription.partenariat.learnMore')}</span>
+                      <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Registration Form Dialog */}
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle
+              className="text-2xl text-[#1A1A1A]"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
+              {t('inscription.form.title')}
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">{t('inscription.form.name')}</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={t('inscription.form.namePlaceholder')}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('inscription.form.email')}</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder={t('inscription.form.emailPlaceholder')}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">{t('inscription.form.phone')}</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder={t('inscription.form.phonePlaceholder')}
+              />
+            </div>
+            <button type="submit" className="btn-primary w-full">
+              {t('inscription.form.submit')}
+            </button>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </section>
+  );
+};
+
+export default Inscription;

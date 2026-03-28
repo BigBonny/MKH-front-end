@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingCart, Globe, Search } from 'lucide-react';
+import { Menu, X, ShoppingCart, Globe, Search, User, LogOut } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useCart } from '../context/CartContext';
+import { useUser, useClerk } from '@clerk/clerk-react';
 
 interface NavigationProps {
   onCartClick: () => void;
@@ -12,6 +13,8 @@ const Navigation = ({ onCartClick }: NavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { language, setLanguage } = useLanguage();
   const { items } = useCart();
+  const { isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
 
   const navLinks = [
     { href: '#mkh', label: 'MKH' },
@@ -123,6 +126,41 @@ const Navigation = ({ onCartClick }: NavigationProps) => {
                   </span>
                 )}
               </button>
+
+              {/* Auth Buttons */}
+              {isSignedIn ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => window.location.href = '/account'}
+                    className={`flex items-center gap-1 p-2 transition-colors duration-300 ${
+                      isScrolled ? 'text-white/80 hover:text-[#D4AF37]' : 'text-white/80 hover:text-white'
+                    }`}
+                    title={user?.firstName || 'Account'}
+                  >
+                    <User className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => signOut()}
+                    className={`flex items-center gap-1 p-2 transition-colors duration-300 ${
+                      isScrolled ? 'text-white/80 hover:text-[#D4AF37]' : 'text-white/80 hover:text-white'
+                    }`}
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => window.location.href = '/sign-in'}
+                  className={`px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                    isScrolled
+                      ? 'bg-[#D4AF37] text-white hover:bg-[#B8941F]'
+                      : 'bg-white text-[#1A1A1A] hover:bg-gray-100'
+                  }`}
+                >
+                  {language === 'fr' ? 'Connexion' : 'Sign In'}
+                </button>
+              )}
 
               {/* Mobile Menu Button */}
               <button
