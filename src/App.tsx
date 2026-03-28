@@ -93,7 +93,7 @@ function MainContent() {
 
 function App() {
   return (
-    <ClerkProvider {...clerkConfig} publishableKey={clerkKey || ''}>
+    <ClerkProvider {...clerkConfig} publishableKey={clerkKey || ''} routerPush={(to) => window.location.href = to} routerReplace={(to) => window.location.href = to} isSatellite={false}>
       <LanguageProvider>
         <CartProvider>
           <BrowserRouter>
