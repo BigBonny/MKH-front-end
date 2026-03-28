@@ -4,6 +4,9 @@
 export const clerkConfig = {
   publishableKey: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
   
+  // Domain configuration - FIXES 404 ERROR
+  domain: 'aware-bengal-40.clerk.accounts.dev',
+  
   // Configuration de l'apparence
   appearance: {
     variables: {

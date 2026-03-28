@@ -51,15 +51,16 @@ module.exports = async (req, res) => {
       case 'checkout.session.completed': {
         const session = event.data.object;
         
-        // Save order to database
+        // Save to purchased_items table (not orders)
         const { error } = await supabase
-          .from('orders')
+          .from('purchased_items')
           .upsert({
+            user_id: session.metadata?.userId,
             stripe_payment_intent_id: session.payment_intent,
-            status: 'processing',
+            status: 'completed',
             total_amount: (session.amount_total || 0) / 100,
-            shipping_address: session.shipping_details,
-            metadata: session.metadata,
+            items: session.metadata?.cartItems ? JSON.parse(session.metadata.cartItems) : [],
+            created_at: new Date().toISOString(),
           }, {
             onConflict: 'stripe_payment_intent_id',
           });
