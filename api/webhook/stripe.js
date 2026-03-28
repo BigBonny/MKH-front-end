@@ -14,11 +14,6 @@ const supabase = createClient(
 );
 
 // Disable body parsing for webhook
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 async function buffer(readable) {
   const chunks = [];
