@@ -3,6 +3,7 @@
 
 export const clerkConfig = {
   publishableKey: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
+  proxyUrl: import.meta.env.VITE_APP_URL || 'http://localhost:5173',
   
   // Configuration de l'apparence
   appearance: {
