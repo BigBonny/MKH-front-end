@@ -3,7 +3,7 @@
 
 export const clerkConfig = {
   publishableKey: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-  proxyUrl: import.meta.env.VITE_APP_URL || 'http://localhost:5173',
+  domain: 'aware-bengal-40.clerk.accounts.dev',
   
   // Configuration de l'apparence
   appearance: {
