@@ -176,7 +176,7 @@ const MKH = () => {
         <div className="mb-32">
           <div className="text-center mb-20">
             <span className="inline-block px-4 py-2 bg-[#D4AF37]/10 rounded-full text-[#D4AF37] text-xs font-semibold tracking-widest uppercase mb-6 border border-[#D4AF37]/20">
-              {t('mkh.mission.subtitle') || 'Our Foundation'}
+              {t('mkh.subtitle')}
             </span>
             <h3
               className="text-3xl md:text-4xl lg:text-5xl text-[#1A1A1A] mb-6 leading-tight"
