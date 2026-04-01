@@ -170,10 +170,6 @@ const MKH = () => {
             <Sparkles className="w-5 h-5 text-[#D4AF37] animate-spin-slow" />
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#D4AF37]" />
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-[#1A1A1A] tracking-wide"
-              style={{ fontFamily: 'Playfair Display, serif' }}>
-            {t('mkh.title') || 'Legacy of Excellence'}
-          </h2>
         </div>
 
         {/* Mission Section with Asymmetric Layout */}
