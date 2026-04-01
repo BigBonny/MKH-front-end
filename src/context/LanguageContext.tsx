@@ -12,7 +12,7 @@ const translations: Record<Language, Translations> = {
     'hero.cta.discover': 'Découvrir l\'Héritage',
     'hero.cta.store': 'Visiter la Boutique',
 
-    'mkh.title': 'Site homko Contenus',
+    'mkh.title': '',
     'mkh.ourMission': 'Notre mission',
     'mkh.missionText': 'Eclairer, former et Les entreprises de MKH agissent comme catalyseur pour le développement économique, social et culturel des peuples du continent africain.',
     'mkh.missionText2': 'Elles participent activement à la mise en œuvre d\'actions et d\'outils d\'édification individuelle et collective. Mettant ainsi à disposition et un accès à des produits multimédia et des services de promotion de haute qualité qui répondent aux besoins pour le progrès social et la construction d\'une puissance géopolitique africain.',
@@ -235,7 +235,7 @@ const translations: Record<Language, Translations> = {
     'hero.cta.discover': 'Discover the Legacy',
     'hero.cta.store': 'Visit the Store',
 
-    'mkh.title': 'Site homko Contents',
+    'mkh.title': '',
     'mkh.ourMission': 'Our mission',
     'mkh.missionText': 'To enlighten, train and the MKH companies act as a catalyst for the economic, social and cultural development of the peoples of the African continent.',
     'mkh.missionText2': 'They actively participate in the implementation of actions and tools for individual and collective development. Thus providing access to multimedia products and high-quality promotion services that meet the needs for social progress and the construction of African geopolitical power.',
