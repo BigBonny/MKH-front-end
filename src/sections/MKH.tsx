@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Target, Eye, Award, Quote, Heart, BookOpen, Sparkles, Wine, Coffee, Leaf, Briefcase, Calendar, Users, Phone, MapPin, HandCoins, Building2, Megaphone, FileText, PenTool, Lightbulb, Globe, Truck, Tent, Trees, Bird, Factory, GraduationCap, Eye as EyeIcon, Sparkles as SparklesIcon, Plane as PlaneIcon, HandHeart, FileSignature } from 'lucide-react';
+import { Target, Eye, Award, Quote, Heart, BookOpen, Sparkles, Wine, Coffee, Leaf, Briefcase, Calendar, Users, Phone, MapPin, HandCoins, Building2, Megaphone, FileText, Lightbulb, Truck, Factory, GraduationCap, Eye as EyeIcon, Plane as PlaneIcon, HandHeart, FileSignature } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
