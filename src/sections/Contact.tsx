@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MapPin, Phone, Mail, Send, Clock, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { MapPin, Mail, Send, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -70,23 +70,23 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: MapPin,
-      title: t('contact.info.address.title'),
-      content: '123 Avenue de l\'Indépendance\nLibreville, Gabon',
+      title: 'Cameroun',
+      content: 'Yaoundé, Cameroun\n+237 6XX XXX XXX',
     },
     {
-      icon: Phone,
-      title: t('contact.info.phone.title'),
-      content: '+241 77 12 34 56\n+241 66 78 90 12',
+      icon: MapPin,
+      title: 'France',
+      content: 'Paris, France\n+33 6XX XXX XXX',
+    },
+    {
+      icon: MapPin,
+      title: 'Royaume-Uni',
+      content: 'London, United Kingdom\n+44 7XX XXX XXX',
     },
     {
       icon: Mail,
       title: t('contact.info.email.title'),
-      content: 'contact@mbouma-kohomm.com\ninfo@mkh-group.com',
-    },
-    {
-      icon: Clock,
-      title: t('contact.info.hours.title'),
-      content: t('contact.info.hours.content'),
+      content: 'contact@mkh-holding.com\ninfo@mkh-holding.com',
     },
   ];
 

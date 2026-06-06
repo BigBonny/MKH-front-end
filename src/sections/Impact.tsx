@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, BookOpen, Building2, Heart, GraduationCap } from 'lucide-react';
+import { ArrowRight, BookOpen, Building2, Heart, GraduationCap, ChevronDown, ChevronUp, HandHeart } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -9,6 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 const Impact = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [expandedPub, setExpandedPub] = useState<number | null>(null);
   const { t } = useLanguage();
 
   const works = [
@@ -42,20 +43,34 @@ const Impact = () => {
     {
       title: t('impact.publications.book1.title'),
       author: 'Mbouma Kohomm',
-      year: '2023',
+      year: '2026',
       type: t('impact.publications.book1.type'),
+      desc: t('impact.publications.book1.desc'),
+      image: '/images site MKH new/Couv Journal Essai Mémoire/Couv livre Mok_page-0001 (1).jpg',
     },
     {
       title: t('impact.publications.book2.title'),
       author: 'Mbouma Kohomm',
-      year: '2021',
+      year: '2025',
       type: t('impact.publications.book2.type'),
+      desc: t('impact.publications.book2.desc'),
+      image: '/images site MKH new/Logo ALB ok.jpg',
     },
     {
       title: t('impact.publications.book3.title'),
       author: 'Mbouma Kohomm',
-      year: '2019',
+      year: '2027',
       type: t('impact.publications.book3.type'),
+      desc: t('impact.publications.book3.desc'),
+      image: '/images site MKH new/Couv Journal Essai Mémoire/Couv. Livre Pôm Man.jpg',
+    },
+    {
+      title: t('impact.publications.book4.title'),
+      author: 'Mbouma Kohomm',
+      year: '2026',
+      type: t('impact.publications.book4.type'),
+      desc: t('impact.publications.book4.desc'),
+      image: '/images site MKH new/Couv Journal Essai Mémoire/Couverture Pouvoir hors serie 2 3 (2)_page-0001.jpg',
     },
   ];
 
@@ -168,7 +183,7 @@ const Impact = () => {
         </div>
       </div>
 
-      {/* Publications Section */}
+      {/* Publications Section — clickable book covers */}
       <div className="section-padding py-24">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-12">
@@ -181,25 +196,86 @@ const Impact = () => {
             </h3>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {publications.map((pub, index) => (
               <div
                 key={index}
-                className="group bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-300 hover:-translate-y-2"
+                className="group bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-300 cursor-pointer"
+                onClick={() => setExpandedPub(expandedPub === index ? null : index)}
               >
-                <span className="text-[#D4AF37] text-sm font-medium">{pub.type}</span>
-                <h4
-                  className="text-xl text-white font-semibold mt-3 mb-4 group-hover:text-[#D4AF37] transition-colors"
-                  style={{ fontFamily: 'Playfair Display, serif' }}
-                >
-                  {pub.title}
-                </h4>
-                <div className="flex items-center justify-between text-white/40 text-sm">
-                  <span>{pub.author}</span>
-                  <span>{pub.year}</span>
+                {/* Book cover */}
+                <div className="h-56 overflow-hidden">
+                  <img
+                    src={pub.image}
+                    alt={pub.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <div className="p-6">
+                  <span className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">{pub.type} &middot; {pub.year}</span>
+                  <h4
+                    className="text-base text-white font-semibold mt-2 mb-3 group-hover:text-[#D4AF37] transition-colors leading-tight"
+                    style={{ fontFamily: 'Playfair Display, serif' }}
+                  >
+                    {pub.title}
+                  </h4>
+                  <div className="flex items-center gap-1 text-xs text-[#D4AF37]/60">
+                    {expandedPub === index
+                      ? <><ChevronUp className="w-3 h-3" /><span>Réduire</span></>
+                      : <><ChevronDown className="w-3 h-3" /><span>En savoir plus</span></>}
+                  </div>
+                  {expandedPub === index && (
+                    <div className="mt-3 pt-3 border-t border-white/10">
+                      <p className="text-sm text-white/60 leading-relaxed">{pub.desc}</p>
+                      <p className="text-xs text-white/30 mt-2">{pub.author}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Action Humanitaire */}
+      <div className="section-padding py-24 border-t border-white/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-12">
+            <HandHeart className="w-8 h-8 text-[#D4AF37]" />
+            <div>
+              <span className="text-[#D4AF37] text-sm font-semibold tracking-[0.3em] uppercase block mb-1">
+                {t('impact.humanitarian.subtitle')}
+              </span>
+              <h3
+                className="text-2xl md:text-3xl text-white font-semibold"
+                style={{ fontFamily: 'Playfair Display, serif' }}
+              >
+                {t('impact.humanitarian.title')}
+              </h3>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="relative overflow-hidden rounded-2xl">
+              <img
+                src="/images site MKH new/African Leaders 2_page-0001 (1).jpg"
+                alt="Action Humanitaire"
+                className="w-full h-[400px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/60 to-transparent" />
+            </div>
+            <div className="space-y-6">
+              <div className="bg-white/5 rounded-2xl p-8 border border-white/10">
+                <h4 className="text-xl text-[#D4AF37] font-semibold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+                  {t('impact.humanitarian.project')}
+                </h4>
+                <p className="text-white/70 leading-relaxed mb-4">{t('impact.humanitarian.desc')}</p>
+                <p className="text-white/50 text-sm leading-relaxed">{t('impact.humanitarian.gala1')} — {t('impact.humanitarian.gala1date')}</p>
+              </div>
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <p className="text-white/60 text-sm leading-relaxed italic">{t('impact.humanitarian.gala2desc')}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
