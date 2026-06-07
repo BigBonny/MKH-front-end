@@ -247,7 +247,7 @@ const MKH = () => {
             <img
               src="/images site MKH new/Logo MKH.jpg"
               alt="MKH"
-              className="h-14 w-auto rounded"
+              className="h-28 md:h-36 w-auto rounded-xl"
             />
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#D4AF37]" />
           </div>
