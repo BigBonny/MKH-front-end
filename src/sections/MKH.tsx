@@ -244,11 +244,11 @@ const MKH = () => {
         <div className="text-center mb-24 relative">
           <div className="inline-flex items-center gap-3 mb-6">
             <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#D4AF37]" />
-            <Sparkles className="w-5 h-5 text-[#D4AF37] animate-spin-slow" />
-            <span className="text-[#D4AF37] text-sm font-semibold tracking-[0.4em] uppercase">
-              MKH
-            </span>
-            <Sparkles className="w-5 h-5 text-[#D4AF37] animate-spin-slow" />
+            <img
+              src="/images site MKH new/Logo MKH.jpg"
+              alt="MKH"
+              className="h-14 w-auto rounded"
+            />
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#D4AF37]" />
           </div>
         </div>
@@ -514,31 +514,48 @@ const MKH = () => {
 
         {/* Philosophy & Works */}
         <div className="mb-32">
-          <div className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-sm border border-[#D4AF37]/20 p-10 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
-                <div className="relative">
-                  <div className="w-14 h-14 rounded-2xl border-2 border-[#D4AF37] flex items-center justify-center mb-6 group-hover:bg-[#D4AF37] transition-colors duration-300">
-                    <Sparkles className="w-6 h-6 text-[#D4AF37] group-hover:text-white transition-colors duration-300" />
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Left: Text Content */}
+              <div className="space-y-10">
+                {/* Philosophy */}
+                <div className="relative bg-white/80 backdrop-blur-sm border border-[#D4AF37]/20 rounded-3xl p-10 shadow-xl">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                  <div className="relative">
+                    <div className="w-14 h-14 rounded-2xl border-2 border-[#D4AF37] flex items-center justify-center mb-6">
+                      <Sparkles className="w-6 h-6 text-[#D4AF37]" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-[#1A1A1A] mb-4">Philosophie</h4>
+                    <p className="text-base text-[#1A1A1A]/70 leading-relaxed">
+                      {t('mkh.philosophy.text')}
+                    </p>
                   </div>
-                  <h4 className="text-xl font-semibold text-[#1A1A1A] mb-4">Philosophie</h4>
-                  <p className="text-base text-[#1A1A1A]/70 leading-relaxed">
-                    {t('mkh.philosophy.text')}
-                  </p>
+                </div>
+
+                {/* Works */}
+                <div className="relative bg-white/80 backdrop-blur-sm border border-[#D4AF37]/20 rounded-3xl p-10 shadow-xl">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                  <div className="relative">
+                    <div className="w-14 h-14 rounded-2xl border-2 border-[#D4AF37] flex items-center justify-center mb-6">
+                      <BookOpen className="w-6 h-6 text-[#D4AF37]" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-[#1A1A1A] mb-4">{t('mkh.works.title')}</h4>
+                    <p className="text-base text-[#1A1A1A]/70 leading-relaxed">
+                      {t('mkh.works.list')}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-sm border border-[#D4AF37]/20 p-10 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
-                <div className="relative">
-                  <div className="w-14 h-14 rounded-2xl border-2 border-[#D4AF37] flex items-center justify-center mb-6 group-hover:bg-[#D4AF37] transition-colors duration-300">
-                    <BookOpen className="w-6 h-6 text-[#D4AF37] group-hover:text-white transition-colors duration-300" />
-                  </div>
-                  <h4 className="text-xl font-semibold text-[#1A1A1A] mb-4">{t('mkh.works.title')}</h4>
-                  <p className="text-base text-[#1A1A1A]/70 leading-relaxed">
-                    {t('mkh.works.list')}
-                  </p>
+              {/* Right: Image */}
+              <div className="relative">
+                <div className="absolute -inset-4 bg-[#D4AF37]/10 rounded-3xl blur-2xl" />
+                <div className="relative overflow-hidden rounded-3xl shadow-2xl border-2 border-[#D4AF37]/20">
+                  <img
+                    src="/images site MKH new/4.jpg"
+                    alt="MKH"
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
               </div>
             </div>

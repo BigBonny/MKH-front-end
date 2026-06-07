@@ -63,14 +63,11 @@ const Navigation = ({ onCartClick }: NavigationProps) => {
               }}
               className="relative z-10"
             >
-              <span
-                className={`text-2xl md:text-3xl font-bold tracking-wider transition-colors duration-300 ${
-                  isScrolled ? 'text-[#D4AF37]' : 'text-white'
-                }`}
-                style={{ fontFamily: 'Playfair Display, serif' }}
-              >
-                MKH
-              </span>
+              <img
+                src="/images site MKH new/Logo MKH.jpg"
+                alt="MKH"
+                className="h-14 md:h-16 w-auto rounded-lg"
+              />
             </a>
 
             {/* Desktop Navigation */}

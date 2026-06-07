@@ -47,12 +47,11 @@ const Footer = () => {
             {/* Brand */}
             <div className="lg:col-span-2">
               <a href="#" className="inline-block mb-6">
-                <span
-                  className="text-4xl font-bold text-[#D4AF37]"
-                  style={{ fontFamily: 'Playfair Display, serif' }}
-                >
-                  MKH
-                </span>
+                <img
+                  src="/images site MKH new/Logo MKH.jpg"
+                  alt="MKH"
+                  className="h-24 md:h-28 w-auto rounded-lg"
+                />
               </a>
               <p className="text-white/60 mb-6 max-w-sm">
                 {t('footer.description')}
