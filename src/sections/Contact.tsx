@@ -71,17 +71,17 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Cameroun',
-      content: 'Yaoundé, Cameroun\n+237 6XX XXX XXX',
+      content: '22 rue 9765, B.P. 13241\nYaoundé, Cameroun\nTél : +237 22 64 76 70\nMob : +237 693 73 97 73',
     },
     {
       icon: MapPin,
       title: 'France',
-      content: 'Paris, France\n+33 6XX XXX XXX',
+      content: '58 rue de Monceau\n75008 Paris\nTél : +33 (0)9 86 54 99 93\nMob : +33 (0)6 62 05 02 37',
     },
     {
       icon: MapPin,
       title: 'Royaume-Uni',
-      content: 'London, United Kingdom\n+44 7XX XXX XXX',
+      content: 'The South Quay Building\n189 Marsh Wall E14\nLondon, UK',
     },
     {
       icon: Mail,

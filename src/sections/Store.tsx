@@ -68,8 +68,8 @@ const Store = () => {
     {
       id: 5,
       name: t('store.atrium.wine1.name'),
-      category: 'Wine',
-      price: 350,
+      category: t('store.atrium.wine'),
+      price: 55,
       image: '/atrium-wine.jpg',
       description: t('store.atrium.wine1.desc'),
       type: 'atrium',
@@ -77,7 +77,7 @@ const Store = () => {
     {
       id: 6,
       name: t('store.atrium.cigars1.name'),
-      category: 'Cigars',
+      category: t('store.atrium.cigars'),
       price: 280,
       image: '/atrium-cigars.jpg',
       description: t('store.atrium.cigars1.desc'),
@@ -86,8 +86,8 @@ const Store = () => {
     {
       id: 7,
       name: t('store.atrium.coffee1.name'),
-      category: 'Coffee',
-      price: 85,
+      category: t('store.atrium.coffee'),
+      price: 15,
       image: '/atrium-coffee.jpg',
       description: t('store.atrium.coffee1.desc'),
       type: 'atrium',
@@ -95,10 +95,19 @@ const Store = () => {
     {
       id: 8,
       name: t('store.atrium.spirits1.name'),
-      category: 'Spirits',
-      price: 420,
+      category: t('store.atrium.spirits'),
+      price: 65,
       image: '/atrium-wine.jpg',
       description: t('store.atrium.spirits1.desc'),
+      type: 'atrium',
+    },
+    {
+      id: 9,
+      name: t('store.atrium.tisane1.name'),
+      category: t('store.atrium.tisane'),
+      price: 35,
+      image: '/images site MKH new/Image tisane.JPG',
+      description: t('store.atrium.tisane1.desc'),
       type: 'atrium',
     },
   ];
@@ -214,6 +223,14 @@ const Store = () => {
               <div className="flex items-center gap-2 text-[#1A1A1A]/60">
                 <Coffee className="w-4 h-4" />
                 <span className="text-sm">{t('store.atrium.coffee')}</span>
+              </div>
+              <div className="flex items-center gap-2 text-[#1A1A1A]/60">
+                <ShoppingBag className="w-4 h-4" />
+                <span className="text-sm">{t('store.atrium.spirits')}</span>
+              </div>
+              <div className="flex items-center gap-2 text-[#1A1A1A]/60">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm">{t('store.atrium.tisane')}</span>
               </div>
             </>
           )}

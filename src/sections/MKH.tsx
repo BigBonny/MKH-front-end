@@ -592,9 +592,9 @@ const MKH = () => {
                     <h4 className="font-semibold text-[#1A1A1A]">Medias</h4>
                   </div>
                   <ul className="space-y-1 text-sm text-[#1A1A1A]/60">
-                    <li>Magazines &amp; Revues</li>
-                    <li>Editions</li>
-                    <li>Evenements</li>
+                    <li>Magazines</li>
+                    <li>Numériques</li>
+                    <li>Événements</li>
                   </ul>
                 </div>
               </div>
@@ -626,9 +626,9 @@ const MKH = () => {
                     <h4 className="font-semibold text-[#1A1A1A]">Formation</h4>
                   </div>
                   <ul className="space-y-1 text-sm text-[#1A1A1A]/60">
-                    <li>Esoterique</li>
+                    <li>Ésotérique</li>
                     <li>Philosophique</li>
-                    <li>Spirituelle</li>
+                    <li>Pouvoirs personnels</li>
                   </ul>
                 </div>
               </div>
@@ -676,9 +676,9 @@ const MKH = () => {
                     <h4 className="font-semibold text-[#1A1A1A]">Associations</h4>
                   </div>
                   <ul className="space-y-1 text-sm text-[#1A1A1A]/60">
-                    <li>Economique</li>
+                    <li>Économique</li>
                     <li>Humanitaire</li>
-                    <li>Fraternelle</li>
+                    <li>Réseautique</li>
                   </ul>
                 </div>
               </div>
