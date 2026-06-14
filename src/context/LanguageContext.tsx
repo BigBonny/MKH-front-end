@@ -118,7 +118,7 @@ const translations: Record<Language, Translations> = {
     'impact.humanitarian.gala2desc': 'Gala de charité en faveur des communautés défavorisées du Cameroun.',
 
     'store.title': 'Le Store MKH',
-    'store.subtitle': 'Découvrez notre collection exclusive de produits de luxe africains.',
+    'store.subtitle': 'Découvrez notre collection exclusive de produits d\'exceptions.',
     'store.fashion.title': 'Fashion',
     'store.fashion.men.title': 'Homme',
     'store.fashion.women.title': 'Femme',
