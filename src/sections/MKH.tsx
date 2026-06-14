@@ -92,6 +92,83 @@ const PublicationsSection = ({ t }: { t: TFunction }) => {
   );
 };
 
+const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
+  const [expanded, setExpanded] = useState<number | null>(null);
+
+  const presseItems = [
+    {
+      image: '/images site MKH new/Logo PMG.jpg',
+      type: t('publications-presse.tribune.type'),
+      title: t('publications-presse.tribune.title'),
+      year: t('publications-presse.tribune.year'),
+      desc: t('publications-presse.tribune.desc'),
+    },
+    {
+      image: '/images site MKH new/Couv Journal Essai Mémoire/Couverture Pouvoir hors serie 2 3 (2)_page-0001.jpg',
+      type: t('publications-presse.revue.type'),
+      title: t('publications-presse.revue.title'),
+      year: t('publications-presse.revue.year'),
+      desc: t('publications-presse.revue.desc'),
+    },
+    {
+      image: '/images site MKH new/Choose Africa.jpg',
+      type: t('publications-presse.choose.type'),
+      title: t('publications-presse.choose.title'),
+      year: t('publications-presse.choose.year'),
+      desc: t('publications-presse.choose.desc'),
+    },
+  ];
+
+  return (
+    <div className="mb-32">
+      <div className="text-center mb-16">
+        <span className="text-[#D4AF37] text-sm font-semibold tracking-[0.3em] uppercase block mb-4">
+          {t('publications-presse.subtitle')}
+        </span>
+        <h3
+          className="text-3xl md:text-4xl lg:text-5xl text-[#1A1A1A]"
+          style={{ fontFamily: 'Playfair Display, serif' }}
+        >
+          {t('publications-presse.title')}
+        </h3>
+        <div className="w-16 h-0.5 bg-[#D4AF37] mx-auto mt-6" />
+      </div>
+
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {presseItems.map((item, idx) => (
+          <div
+            key={idx}
+            className="group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-[#D4AF37]/10 cursor-pointer"
+            onClick={() => setExpanded(expanded === idx ? null : idx)}
+          >
+            <div className="h-64 overflow-hidden">
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div className="p-6">
+              <p className="text-xs text-[#D4AF37] uppercase tracking-wider font-semibold mb-1">{item.type} &middot; {item.year}</p>
+              <h4 className="text-base font-semibold text-[#1A1A1A] leading-tight mb-3">{item.title}</h4>
+              <div className="flex items-center gap-1 text-xs text-[#D4AF37]/70">
+                {expanded === idx
+                  ? <><ChevronUp className="w-3 h-3" /><span>Reduire</span></>
+                  : <><ChevronDown className="w-3 h-3" /><span>En savoir plus</span></>}
+              </div>
+              {expanded === idx && (
+                <div className="mt-4 pt-4 border-t border-[#D4AF37]/20">
+                  <p className="text-sm text-[#1A1A1A]/70 leading-relaxed">{item.desc}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const MKH = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -565,6 +642,9 @@ const MKH = () => {
         {/* Publications with book covers (clickable) */}
         <PublicationsSection t={t} />
 
+        {/* Publications Presse */}
+        <PublicationsPresseSection t={t} />
+
         {/* Notre Ecosysteme */}
         <div className="mb-32">
           <div className="text-center mb-16">
@@ -584,7 +664,7 @@ const MKH = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-[#D4AF37]/10 hover:-translate-y-1">
                 <div className="h-40 overflow-hidden">
-                  <img src="/images site MKH new/Logo MKH bis.jpg" alt="Medias" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src="/images site MKH new/Logo PMG.jpg" alt="Medias" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-3">

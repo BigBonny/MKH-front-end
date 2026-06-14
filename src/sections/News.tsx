@@ -28,7 +28,6 @@ const News = () => {
       date: '2026',
       location: 'Afrique & Diaspora',
       description: t('news.events.event1.desc'),
-      image: '/images site MKH new/African Leaders 2_page-0001 (1).jpg',
     },
     {
       id: 3,

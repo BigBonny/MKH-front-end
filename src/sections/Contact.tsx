@@ -155,6 +155,26 @@ const Contact = () => {
               </div>
             </div>
 
+            {/* Service Annonces */}
+            <div className="bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5 rounded-lg p-8 shadow-sm border border-[#D4AF37]/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-[#D4AF37] rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">A</span>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-[#1A1A1A]">{t('contact.service.title')}</h4>
+                  <span className="text-xs text-[#D4AF37] uppercase tracking-wider">{t('contact.service.subtitle')}</span>
+                </div>
+              </div>
+              <p className="text-[#1A1A1A]/70 text-sm mb-6 leading-relaxed">
+                {t('contact.service.desc')}
+              </p>
+              <button className="w-full py-3 bg-[#D4AF37] text-white font-semibold rounded-lg hover:bg-[#D4AF37]/90 transition-colors flex items-center justify-center gap-2">
+                <span>{t('contact.service.cta')}</span>
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+
             {/* Map Placeholder */}
             <div className="bg-[#1A1A1A] rounded-lg p-8 text-center">
               <MapPin className="w-12 h-12 text-[#D4AF37] mx-auto mb-4" />

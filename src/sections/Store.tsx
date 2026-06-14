@@ -316,6 +316,11 @@ const Store = () => {
                   <p className="text-[#1A1A1A]/60 mt-4 mb-6">
                     {selectedProduct.description}
                   </p>
+                  {selectedProduct.id === 8 && (
+                    <p className="text-[#1A1A1A]/80 mt-2 mb-6 text-sm italic border-l-2 border-[#D4AF37] pl-4">
+                      {t('store.atrium.tisane1.longDesc')}
+                    </p>
+                  )}
                   <p className="text-3xl font-bold text-[#1A1A1A] mb-8">
                     {selectedProduct.price.toLocaleString()} €
                   </p>
