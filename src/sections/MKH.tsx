@@ -74,7 +74,7 @@ const PublicationsSection = ({ t }: { t: TFunction }) => {
               </div>
               {expanded === idx && (
                 <div className="mt-4 pt-4 border-t border-[#D4AF37]/20">
-                  <p className="text-sm text-[#1A1A1A]/70 leading-relaxed">{pub.desc}</p>
+                  <p className="text-sm text-[#1A1A1A]/70 leading-relaxed whitespace-pre-line">{pub.desc}</p>
                 </div>
               )}
             </div>

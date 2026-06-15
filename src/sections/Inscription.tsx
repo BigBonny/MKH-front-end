@@ -400,7 +400,7 @@ const Inscription = () => {
                         {t('inscription.actionnariat.card.desc')}
                       </p>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-5xl font-bold">2.5%</span>
+                        <span className="text-5xl font-bold">9,5–11%</span>
                         <span className="text-white/70">{t('inscription.actionnariat.card.return')}</span>
                       </div>
                     </div>
