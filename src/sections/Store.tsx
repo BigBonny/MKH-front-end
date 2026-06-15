@@ -241,7 +241,7 @@ const Store = () => {
           {products.map((product) => (
             <div
               key={product.id}
-              className="product-card group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              className={`product-card group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 ${product.id === 9 ? 'lg:col-span-1' : ''}`}
             >
               {/* Image */}
               <div
@@ -285,6 +285,16 @@ const Store = () => {
               </div>
             </div>
           ))}
+          {/* Tisane Magique Description - shown in atrium tab next to the product */}
+          {activeTab === 'atrium' && (
+            <div className="lg:col-span-3 flex items-center">
+              <div className="bg-white/80 rounded-lg p-6 border-l-4 border-[#D4AF37]">
+                <p className="text-[#1A1A1A]/80 text-sm leading-relaxed italic">
+                  {t('store.atrium.tisane1.longDesc')}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -316,7 +326,7 @@ const Store = () => {
                   <p className="text-[#1A1A1A]/60 mt-4 mb-6">
                     {selectedProduct.description}
                   </p>
-                  {selectedProduct.id === 8 && (
+                  {selectedProduct.id === 9 && (
                     <p className="text-[#1A1A1A]/80 mt-2 mb-6 text-sm italic border-l-2 border-[#D4AF37] pl-4">
                       {t('store.atrium.tisane1.longDesc')}
                     </p>
