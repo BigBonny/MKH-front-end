@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, BookOpen, Building2, Heart, GraduationCap, ChevronDown, ChevronUp, HandHeart } from 'lucide-react';
+import { ArrowRight, Building2, Heart, GraduationCap, HandHeart } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -9,7 +9,6 @@ gsap.registerPlugin(ScrollTrigger);
 const Impact = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [expandedPub, setExpandedPub] = useState<number | null>(null);
   const { t } = useLanguage();
 
   const works = [
@@ -39,40 +38,6 @@ const Impact = () => {
     },
   ];
 
-  const publications = [
-    {
-      title: t('impact.publications.book1.title'),
-      author: 'Mbouma Kohomm',
-      year: '2026',
-      type: t('impact.publications.book1.type'),
-      desc: t('impact.publications.book1.desc'),
-      image: '/images site MKH new/Couv Journal Essai Mémoire/Couv livre Mok_page-0001 (1).jpg',
-    },
-    {
-      title: t('impact.publications.book2.title'),
-      author: 'Mbouma Kohomm',
-      year: '2025',
-      type: t('impact.publications.book2.type'),
-      desc: t('impact.publications.book2.desc'),
-      image: '/images site MKH new/Logo ALB ok.jpg',
-    },
-    {
-      title: t('impact.publications.book3.title'),
-      author: 'Mbouma Kohomm',
-      year: '2027',
-      type: t('impact.publications.book3.type'),
-      desc: t('impact.publications.book3.desc'),
-      image: '/images site MKH new/Couv Journal Essai Mémoire/Couv. Livre Pôm Man.jpg',
-    },
-    {
-      title: t('impact.publications.book4.title'),
-      author: 'Mbouma Kohomm',
-      year: '2026',
-      type: t('impact.publications.book4.type'),
-      desc: t('impact.publications.book4.desc'),
-      image: '/images site MKH new/Couv Journal Essai Mémoire/Couverture Pouvoir hors serie 2 3 (2)_page-0001.jpg',
-    },
-  ];
 
   useEffect(() => {
     const ctx = gsap.context(() => {
