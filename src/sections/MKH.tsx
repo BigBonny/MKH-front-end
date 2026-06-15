@@ -33,13 +33,6 @@ const PublicationsSection = ({ t }: { t: TFunction }) => {
       year: '2027',
       desc: t('impact.publications.book3.desc'),
     },
-    {
-      image: '/images site MKH new/Couv Journal Essai Mémoire/Couverture Pouvoir hors serie 2 3 (2)_page-0001.jpg',
-      type: t('impact.publications.book4.type'),
-      title: t('impact.publications.book4.title'),
-      year: '2026',
-      desc: t('impact.publications.book4.desc'),
-    },
   ];
 
   return (
@@ -97,7 +90,7 @@ const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
 
   const presseItems = [
     {
-      image: '/images site MKH new/Logo PMG.jpg',
+      image: '/images site MKH new/Magazines.jpg',
       type: t('publications-presse.tribune.type'),
       title: t('publications-presse.tribune.title'),
       year: t('publications-presse.tribune.year'),
@@ -748,7 +741,7 @@ const MKH = () => {
 
               <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-[#D4AF37]/10 hover:-translate-y-1">
                 <div className="h-40 overflow-hidden">
-                  <img src="/images site MKH new/Forum Afrique.jpg" alt="Associations" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src="/images site MKH new/Image association.jpg" alt="Associations" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-3">

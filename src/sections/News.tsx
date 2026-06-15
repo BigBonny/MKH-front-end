@@ -28,6 +28,7 @@ const News = () => {
       date: '2026',
       location: 'Afrique & Diaspora',
       description: t('news.events.event1.desc'),
+      image: '/images site MKH new/Choose Africa.jpg',
     },
     {
       id: 3,

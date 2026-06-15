@@ -183,60 +183,6 @@ const Impact = () => {
         </div>
       </div>
 
-      {/* Publications Section — clickable book covers */}
-      <div className="section-padding py-24">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-12">
-            <BookOpen className="w-8 h-8 text-[#D4AF37]" />
-            <h3
-              className="text-2xl md:text-3xl text-white font-semibold"
-              style={{ fontFamily: 'Playfair Display, serif' }}
-            >
-              {t('impact.publications.title')}
-            </h3>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {publications.map((pub, index) => (
-              <div
-                key={index}
-                className="group bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-300 cursor-pointer"
-                onClick={() => setExpandedPub(expandedPub === index ? null : index)}
-              >
-                {/* Book cover */}
-                <div className="h-56 overflow-hidden">
-                  <img
-                    src={pub.image}
-                    alt={pub.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-                <div className="p-6">
-                  <span className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">{pub.type} &middot; {pub.year}</span>
-                  <h4
-                    className="text-base text-white font-semibold mt-2 mb-3 group-hover:text-[#D4AF37] transition-colors leading-tight"
-                    style={{ fontFamily: 'Playfair Display, serif' }}
-                  >
-                    {pub.title}
-                  </h4>
-                  <div className="flex items-center gap-1 text-xs text-[#D4AF37]/60">
-                    {expandedPub === index
-                      ? <><ChevronUp className="w-3 h-3" /><span>Réduire</span></>
-                      : <><ChevronDown className="w-3 h-3" /><span>En savoir plus</span></>}
-                  </div>
-                  {expandedPub === index && (
-                    <div className="mt-3 pt-3 border-t border-white/10">
-                      <p className="text-sm text-white/60 leading-relaxed">{pub.desc}</p>
-                      <p className="text-xs text-white/30 mt-2">{pub.author}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Action Humanitaire */}
       <div className="section-padding py-24 border-t border-white/10">
         <div className="max-w-7xl mx-auto">
@@ -258,7 +204,7 @@ const Impact = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="relative overflow-hidden rounded-2xl">
               <img
-                src="/images site MKH new/African Leaders 2_page-0001 (1).jpg"
+                src="/images site MKH new/Image association.jpg"
                 alt="Action Humanitaire"
                 className="w-full h-[400px] object-cover"
               />
