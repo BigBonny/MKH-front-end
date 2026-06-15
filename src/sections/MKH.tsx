@@ -50,7 +50,7 @@ const PublicationsSection = ({ t }: { t: TFunction }) => {
         <div className="w-16 h-0.5 bg-[#D4AF37] mx-auto mt-6" />
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
         {publications.map((pub, idx) => (
           <div
             key={idx}
