@@ -20,6 +20,7 @@ import PaymentCancel from './pages/PaymentCancel';
 import { CartProvider } from './context/CartContext';
 import { LanguageProvider } from './context/LanguageContext';
 import CartModal from './components/CartModal';
+import CookieConsent from './components/CookieConsent';
 import { clerkConfig } from './lib/clerk';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -87,6 +88,7 @@ function MainContent() {
       </main>
       <Footer />
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CookieConsent />
     </div>
   );
 }
