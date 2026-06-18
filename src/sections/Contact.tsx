@@ -86,7 +86,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: t('contact.info.email.title'),
-      content: 'contact@mkh-holding.com\ninfo@mkh-holding.com',
+      content: 'contact@mbouma-kohomm-holding.com\ninfo@mbouma-kohomm-holding.com',
     },
   ];
 
