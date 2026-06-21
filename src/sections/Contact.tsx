@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MapPin, Mail, Send, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { MapPin, Mail, Send, Facebook, Twitter, Instagram, Linkedin, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,7 +19,7 @@ const Contact = () => {
     subject: '',
     message: '',
   });
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -45,30 +45,37 @@ const Contact = () => {
   }, []);
 
   const [sending, setSending] = useState(false);
+  const [successSent, setSuccessSent] = useState(false);
+
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_akwkjcn';
+  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_9n1v92s';
+  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'Gfj5leeUAz7bDlt5V';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
 
     try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      const result = await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
         {
           from_name: formData.name,
           from_email: formData.email,
           subject: formData.subject,
           message: formData.message,
-          to_email: 'contact@mbouma-kohomm-holding.com',
+          to_email: 'info@mbouma-kohomm-holding.com',
         },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        PUBLIC_KEY
       );
 
-      toast.success(t('contact.form.success'));
+      console.log('EmailJS result:', result);
+      setSuccessSent(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
+      setTimeout(() => setSuccessSent(false), 5000);
     } catch (error) {
       console.error('EmailJS error:', error);
-      toast.error(t('contact.form.error') || 'Failed to send message. Please try again.');
+      toast.error(t('contact.form.error') || 'Échec de l\'envoi. Veuillez réessayer.');
     } finally {
       setSending(false);
     }
@@ -202,7 +209,28 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="contact-content">
-            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg">
+            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg relative overflow-hidden">
+              {/* Success Overlay */}
+              {successSent && (
+                <div className="absolute inset-0 bg-white z-10 flex flex-col items-center justify-center animate-in fade-in duration-500">
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
+                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3
+                    className="text-2xl md:text-3xl text-[#1A1A1A] font-semibold mb-3 text-center"
+                    style={{ fontFamily: 'Playfair Display, serif' }}
+                  >
+                    {language === 'fr' ? 'Message envoyé !' : 'Message sent!'}
+                  </h3>
+                  <p className="text-[#1A1A1A]/60 text-center max-w-sm">
+                    {language === 'fr'
+                      ? 'Merci pour votre message. Nous vous répondrons dans les plus brefs délais.'
+                      : 'Thank you for your message. We will get back to you shortly.'}
+                  </p>
+                  <div className="w-12 h-0.5 bg-[#D4AF37] mt-6" />
+                </div>
+              )}
+
               <h3
                 className="text-2xl md:text-3xl text-[#1A1A1A] font-semibold mb-2"
                 style={{ fontFamily: 'Playfair Display, serif' }}
