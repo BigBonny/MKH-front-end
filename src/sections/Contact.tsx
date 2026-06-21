@@ -46,27 +46,18 @@ const Contact = () => {
 
   const [sending, setSending] = useState(false);
   const [successSent, setSuccessSent] = useState(false);
-
-  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_akwkjcn';
-  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_9n1v92s';
-  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'Gfj5leeUAz7bDlt5V';
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
 
     try {
-      const result = await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          to_email: 'info@mbouma-kohomm-holding.com',
-        },
-        PUBLIC_KEY
+      const result = await emailjs.sendForm(
+        'service_akwkjcn',
+        'template_9n1v92s',
+        formRef.current!,
+        'Gfj5leeUAz7bDlt5V'
       );
 
       console.log('EmailJS result:', result);
@@ -239,12 +230,13 @@ const Contact = () => {
               </h3>
               <p className="text-[#1A1A1A]/60 mb-8">{t('contact.form.subtitle')}</p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="name">{t('contact.form.name')}</Label>
                     <Input
                       id="name"
+                      name="from_name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder={t('contact.form.namePlaceholder')}
@@ -255,6 +247,7 @@ const Contact = () => {
                     <Label htmlFor="email">{t('contact.form.email')}</Label>
                     <Input
                       id="email"
+                      name="from_email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -268,6 +261,7 @@ const Contact = () => {
                   <Label htmlFor="subject">{t('contact.form.subject')}</Label>
                   <Input
                     id="subject"
+                    name="subject"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     placeholder={t('contact.form.subjectPlaceholder')}
@@ -279,6 +273,7 @@ const Contact = () => {
                   <Label htmlFor="message">{t('contact.form.message')}</Label>
                   <Textarea
                     id="message"
+                    name="message"
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder={t('contact.form.messagePlaceholder')}
