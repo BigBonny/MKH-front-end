@@ -213,7 +213,52 @@ const Account = () => {
     return labels[status] || status;
   };
 
-  if (!isLoaded || isLoading) {
+  if (!isLoaded) {
+    return (
+      <section id="account" className="py-24 md:py-32 bg-[#1A1A1A]">
+        <div className="section-padding flex items-center justify-center">
+          <Loader2 className="w-8 h-8 text-[#D4AF37] animate-spin" />
+        </div>
+      </section>
+    );
+  }
+
+  if (!user) {
+    return (
+      <section id="account" className="py-24 md:py-32 bg-[#1A1A1A]">
+        <div className="section-padding flex flex-col items-center justify-center text-center gap-6">
+          <User className="w-16 h-16 text-[#D4AF37]/40" />
+          <h2
+            className="text-3xl text-white font-semibold"
+            style={{ fontFamily: 'Playfair Display, serif' }}
+          >
+            {language === 'fr' ? 'Accès réservé' : 'Members only'}
+          </h2>
+          <p className="text-white/60 max-w-md">
+            {language === 'fr'
+              ? 'Connectez-vous ou créez un compte pour accéder à votre espace personnel.'
+              : 'Sign in or create an account to access your personal space.'}
+          </p>
+          <div className="flex gap-4">
+            <a
+              href="/sign-in"
+              className="px-8 py-3 bg-[#D4AF37] text-white font-semibold rounded-lg hover:bg-[#D4AF37]/90 transition-colors"
+            >
+              {language === 'fr' ? 'Se connecter' : 'Sign in'}
+            </a>
+            <a
+              href="/sign-up"
+              className="px-8 py-3 bg-white/10 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors"
+            >
+              {language === 'fr' ? 'Créer un compte' : 'Create account'}
+            </a>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isLoading) {
     return (
       <section id="account" className="py-24 md:py-32 bg-[#1A1A1A]">
         <div className="section-padding flex items-center justify-center">

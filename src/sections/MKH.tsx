@@ -1,7 +1,7 @@
 ﻿import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Target, Eye, Award, Quote, Heart, BookOpen, Sparkles, FileText, Truck, Factory, GraduationCap, Plane as PlaneIcon, HandHeart, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Target, Eye, Award, Quote, Heart, BookOpen, Sparkles, FileText, Truck, Factory, GraduationCap, Plane as PlaneIcon, HandHeart, ChevronDown, ChevronUp, X, Download } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -153,6 +153,17 @@ const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
                 <div className="mt-4 pt-4 border-t border-[#D4AF37]/20">
                   <p className="text-sm text-[#1A1A1A]/70 leading-relaxed">{item.desc}</p>
                 </div>
+              )}
+              {idx === 1 && (
+                <a
+                  href="/images site MKH new/Int\u00e9rieur Pouvoir HS.pdf"
+                  download="Interieur Pouvoir HS.pdf"
+                  onClick={(e) => e.stopPropagation()}
+                  className="mt-4 flex items-center gap-2 px-4 py-2 bg-[#D4AF37] text-white text-xs font-semibold rounded-lg hover:bg-[#D4AF37]/80 transition-colors w-fit"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Télécharger (test)</span>
+                </a>
               )}
             </div>
           </div>
