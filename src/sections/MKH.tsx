@@ -1,8 +1,12 @@
 ﻿import { useEffect, useRef, useState } from 'react';
+import emailjs from '@emailjs/browser';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Target, Eye, Award, Quote, Heart, BookOpen, Sparkles, FileText, Truck, Factory, GraduationCap, Plane as PlaneIcon, HandHeart, ChevronDown, ChevronUp, X, Download } from 'lucide-react';
+import { Target, Eye, Award, Quote, Heart, BookOpen, Sparkles, FileText, Truck, Factory, GraduationCap, Plane as PlaneIcon, HandHeart, ChevronDown, ChevronUp, X, Download, Send } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -88,6 +92,44 @@ const PublicationsSection = ({ t }: { t: TFunction }) => {
 const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
   const [expanded, setExpanded] = useState<number | null>(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [requestEmail, setRequestEmail] = useState('');
+  const [requestMessage, setRequestMessage] = useState(
+    'Bonjour,\n\nJe souhaite recevoir un exemplaire de la revue Pouvoir — Hors-série.\n\nMerci.'
+  );
+  const [requestSending, setRequestSending] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
+
+  const handlePdfRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!requestEmail) return;
+    setRequestSending(true);
+
+    try {
+      await emailjs.send(
+        'service_akwkjcn',
+        'template_9n1v92s',
+        {
+          from_name: requestEmail,
+          from_email: requestEmail,
+          subject: 'Demande de la revue Pouvoir Hors-Série',
+          message: requestMessage,
+          to_email: 'info@mbouma-kohomm-holding.com',
+        },
+        'Gfj5leeUAz7bDlt5V'
+      );
+      setRequestSent(true);
+      setRequestEmail('');
+      setRequestMessage(
+        'Bonjour,\n\nJe souhaite recevoir un exemplaire de la revue Pouvoir — Hors-série.\n\nMerci.'
+      );
+      setTimeout(() => setRequestSent(false), 5000);
+    } catch (error) {
+      console.error('EmailJS request error:', error);
+      alert('Une erreur est survenue. Veuillez réessayer.');
+    } finally {
+      setRequestSending(false);
+    }
+  };
 
   const presseItems = [
     {
@@ -122,7 +164,7 @@ const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
           onClick={() => setShowPdfModal(false)}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -131,6 +173,7 @@ const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
             >
               <X className="w-5 h-5" />
             </button>
+
             <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mb-5">
               <Download className="w-6 h-6 text-[#D4AF37]" />
             </div>
@@ -141,21 +184,58 @@ const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
               Obtenir la revue
             </h3>
             <div className="w-8 h-0.5 bg-[#D4AF37] mb-4" />
-            <p className="text-[#1A1A1A]/70 text-sm leading-relaxed mb-4">
-              Le téléchargement de la revue <strong>Pouvoir — Hors-série</strong> sera bientôt disponible en ligne.
-            </p>
             <p className="text-[#1A1A1A]/70 text-sm leading-relaxed mb-6">
-              En attendant, envoyez un email à l'adresse suivante pour recevoir votre exemplaire :
+              Le téléchargement de la revue <strong>Pouvoir — Hors-série</strong> sera bientôt disponible en ligne.
+              Envoyez-nous votre demande et nous vous contacterons dès que possible.
             </p>
-            <a
-              href="mailto:info@mbouma-kohomm-holding.com?subject=Demande%20de%20la%20revue%20Pouvoir%20Hors-S%C3%A9rie&body=Bonjour%2C%0A%0AJe%20souhaite%20recevoir%20un%20exemplaire%20de%20la%20revue%20Pouvoir%20%E2%80%94%20Hors-s%C3%A9rie.%0A%0AMerci."
-              className="flex items-center justify-center gap-2 w-full py-3 bg-[#D4AF37] text-white font-semibold rounded-lg hover:bg-[#D4AF37]/90 transition-colors text-sm"
-            >
-              info@mbouma-kohomm-holding.com
-            </a>
-            <p className="text-[#1A1A1A]/40 text-xs text-center mt-4">
-              Cliquez sur l'adresse pour ouvrir votre messagerie
-            </p>
+
+            {requestSent ? (
+              <div className="flex flex-col items-center text-center py-4 animate-in fade-in duration-500">
+                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-3">
+                  <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-[#1A1A1A] font-medium">Demande envoyée !</p>
+                <p className="text-[#1A1A1A]/60 text-sm mt-1">Nous vous répondrons rapidement.</p>
+              </div>
+            ) : (
+              <form onSubmit={handlePdfRequest} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="pdf-email" className="text-[#1A1A1A]">
+                    Votre email
+                  </Label>
+                  <Input
+                    id="pdf-email"
+                    type="email"
+                    value={requestEmail}
+                    onChange={(e) => setRequestEmail(e.target.value)}
+                    placeholder="exemple@email.com"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="pdf-message" className="text-[#1A1A1A]">
+                    Votre message
+                  </Label>
+                  <Textarea
+                    id="pdf-message"
+                    value={requestMessage}
+                    onChange={(e) => setRequestMessage(e.target.value)}
+                    rows={5}
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={requestSending}
+                  className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>{requestSending ? 'Envoi...' : 'Envoyer la demande'}</span>
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}
