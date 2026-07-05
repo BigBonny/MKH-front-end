@@ -87,6 +87,7 @@ const PublicationsSection = ({ t }: { t: TFunction }) => {
 
 const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
 
   const presseItems = [
     {
@@ -114,6 +115,51 @@ const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
 
   return (
     <div className="mb-32">
+      {/* PDF Request Modal */}
+      {showPdfModal && (
+        <div
+          className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowPdfModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowPdfModal(false)}
+              className="absolute top-4 right-4 text-[#1A1A1A]/40 hover:text-[#1A1A1A] transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mb-5">
+              <Download className="w-6 h-6 text-[#D4AF37]" />
+            </div>
+            <h3
+              className="text-xl font-semibold text-[#1A1A1A] mb-2"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
+              Obtenir la revue
+            </h3>
+            <div className="w-8 h-0.5 bg-[#D4AF37] mb-4" />
+            <p className="text-[#1A1A1A]/70 text-sm leading-relaxed mb-4">
+              Le téléchargement de la revue <strong>Pouvoir — Hors-série</strong> sera bientôt disponible en ligne.
+            </p>
+            <p className="text-[#1A1A1A]/70 text-sm leading-relaxed mb-6">
+              En attendant, envoyez un email à l'adresse suivante pour recevoir votre exemplaire :
+            </p>
+            <a
+              href="mailto:info@mbouma-kohomm-holding.com?subject=Demande%20de%20la%20revue%20Pouvoir%20Hors-S%C3%A9rie&body=Bonjour%2C%0A%0AJe%20souhaite%20recevoir%20un%20exemplaire%20de%20la%20revue%20Pouvoir%20%E2%80%94%20Hors-s%C3%A9rie.%0A%0AMerci."
+              className="flex items-center justify-center gap-2 w-full py-3 bg-[#D4AF37] text-white font-semibold rounded-lg hover:bg-[#D4AF37]/90 transition-colors text-sm"
+            >
+              info@mbouma-kohomm-holding.com
+            </a>
+            <p className="text-[#1A1A1A]/40 text-xs text-center mt-4">
+              Cliquez sur l'adresse pour ouvrir votre messagerie
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="text-center mb-16">
         <span className="text-[#D4AF37] text-sm font-semibold tracking-[0.3em] uppercase block mb-4">
           {t('publications-presse.subtitle')}
@@ -155,15 +201,13 @@ const PublicationsPresseSection = ({ t }: { t: TFunction }) => {
                 </div>
               )}
               {idx === 1 && (
-                <a
-                  href="/images site MKH new/Int\u00e9rieur Pouvoir HS.pdf"
-                  download="Interieur Pouvoir HS.pdf"
-                  onClick={(e) => e.stopPropagation()}
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowPdfModal(true); }}
                   className="mt-4 flex items-center gap-2 px-4 py-2 bg-[#D4AF37] text-white text-xs font-semibold rounded-lg hover:bg-[#D4AF37]/80 transition-colors w-fit"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Télécharger (test)</span>
-                </a>
+                  <span>Télécharger</span>
+                </button>
               )}
             </div>
           </div>
